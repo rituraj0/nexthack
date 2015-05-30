@@ -1,6 +1,7 @@
 from random import randint
 import pycps
 import os
+from time import sleep
 from flask import Flask, jsonify
 from bs4 import BeautifulSoup
 from operator import itemgetter
@@ -273,8 +274,25 @@ def insert():
     con.insert({ randint(1,1000): doc})
     return "inserted";
 
-if __name__ == '__main__':
-    # Bind to PORT if defined, otherwise default to 5000.
+def populate_database():
+    con = pycps.Connection('tcp://cloud-eu-0.clusterpoint.com:9007', 'nexthack', 'rituraj.tc@gmail.com', 'clusterpoint', '794')
+    while(True):
+        doc = {'title': 'goal', 'text': 'second text.' , 'Start': "1525-05-2015"}
+        con.insert({ randint(1,9999999): doc})
+        sleep(5);#slep for 5 sec
+
+def start_server():
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
+
+if __name__ == '__main__':
+    thread_list = []
+    thread_list.append( threading.Thread(target=populate_database) )
+    thread_list.append( threading.Thread(target=start_server) )
+
+    for thread in thread_list:
+        thread.start()
+    for thread in thread_list:
+        thread.join()
+
     
