@@ -255,7 +255,7 @@ def fetch():
     posts["ongoing"] = sorted(posts["ongoing"], key=lambda k: strptime(k['EndTime'], "%a, %d %b %Y %H:%M"))
     posts["timestamp"] = strftime("%a, %d %b %Y %H:%M:%S", localtime())
 
-'''
+
 @app.route('/')
 @app.cache.cached(timeout=900) # cache for 15 minutes
 def index():    
@@ -264,9 +264,9 @@ def index():
     resp.status_code = 200
     resp.headers['Access-Control-Allow-Origin'] = '*'
     return resp
-'''
 
-@app.route('/')
+
+@app.route('/index')
 def insert():
     con = pycps.Connection('tcp://cloud-eu-0.clusterpoint.com:9007', 'nexthack', 'rituraj.tc@gmail.com', 'clusterpoint', '794')
     doc = {'title': 'goal', 'text': 'second text.' , 'Start': "1525-05-2015"}
