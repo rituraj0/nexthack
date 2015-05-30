@@ -1,0 +1,22 @@
+{
+"manifest_version": 2,
+
+  "name": "Next Hackathon",
+  "short_name": "NextHack",
+  "description": "Displays live and upcoming Hackathons.",
+  "version": "0.0.0",
+
+  "permissions": [
+    "http://nexthack.herokuapp.com/",
+    "tabs"
+  ],
+  "options_page": "options.html",
+   "icons": { "16": "img/icon32.png",
+              "32": "img/icon32.png",
+           "48": "img/icon32.png",
+          "128": "img/icon32.png" },
+  "browser_action": {
+    "default_icon": "img/icon32.png",
+    "default_popup": "popup.html"
+  }
+}
