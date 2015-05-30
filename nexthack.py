@@ -236,6 +236,7 @@ def fetch():
 
     thread_list = []
     thread_list.append( threading.Thread(target=getDataFromGithub) )
+    '''
     thread_list.append( threading.Thread(target=getDataFromCodeforces) )
     thread_list.append( threading.Thread(target=getDataFromTopcoder) )
     thread_list.append( threading.Thread(target=getDataFromHackerearth) )
@@ -243,7 +244,7 @@ def fetch():
     thread_list.append( threading.Thread(target=getDataFromHackerrankGeneral) )
     thread_list.append( threading.Thread(target=getDataFromHackerrankCollege) )
     thread_list.append( threading.Thread(target=getDataFromGoogle) )
-
+    '''
     for thread in thread_list:
         thread.start()
 
