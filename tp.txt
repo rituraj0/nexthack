@@ -27,3 +27,20 @@
 2015-05-30T15:17:38.318610+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=nexthack.herokuapp.com request_id=7dadd6cf-5efa-48da-8a4e-be42d25364bd fwd="202.65.136.18" dyno= connect= service= status=503 bytes=
 2015-05-30T15:17:51.133576+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=nexthack.herokuapp.com request_id=d8fcc506-cb0c-4ecc-9484-737e9c9fb941 fwd="202.65.136.18" dyno= connect= service= status=503 bytes=
 2015-05-30T15:17:54.277584+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=nexthack.herokuapp.com request_id=e5fd5373-6673-4523-a9d0-1be1f654c438 fwd="202.65.136.18" dyno= connect= service= status=503 bytes=
+2015-05-30T15:19:52.759723+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=nexthack.herokuapp.com request_id=8a3f6ff5-da1b-4a87-95ce-8919d881e66a fwd="202.153.43.137" dyno= connect= service= status=503 bytes=
+2015-05-30T15:19:54.740933+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=nexthack.herokuapp.com request_id=2fb2e15b-88ad-4600-9a22-719e5ea83593 fwd="202.153.43.137" dyno= connect= service= status=503 bytes=
+2015-05-30T15:21:21.615236+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=nexthack.herokuapp.com request_id=828d77de-5449-497e-a210-557a4f2b856d fwd="66.249.84.241" dyno= connect= service= status=503 bytes=
+2015-05-30T15:23:00.425060+00:00 heroku[api]: Deploy 0d41e45 by rituraj.tc@gmail.com
+2015-05-30T15:23:00.425060+00:00 heroku[api]: Release v4 created by rituraj.tc@gmail.com
+2015-05-30T15:23:00.510591+00:00 heroku[web.1]: State changed from crashed to starting
+2015-05-30T15:23:04.255456+00:00 heroku[web.1]: Starting process with command `python nexthack.py`
+2015-05-30T15:23:06.630795+00:00 app[web.1]:  * Running on http://127.0.0.1:5000/
+2015-05-30T15:23:06.631012+00:00 app[web.1]:  * Restarting with reloader
+2015-05-30T15:24:04.742577+00:00 heroku[web.1]: Error R10 (Boot timeout) -> Web process failed to bind to $PORT within 60 seconds of launch
+2015-05-30T15:24:04.742760+00:00 heroku[web.1]: Stopping process with SIGKILL
+2015-05-30T15:24:05.545283+00:00 heroku[web.1]: State changed from starting to crashed
+2015-05-30T15:24:05.529040+00:00 heroku[web.1]: Process exited with status 137
+2015-05-30T15:24:08.532584+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=nexthack.herokuapp.com request_id=c5b53b97-579d-4166-9952-449c1bbf4df5 fwd="202.65.136.18" dyno= connect= service= status=503 bytes=
+2015-05-30T15:24:10.451413+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=nexthack.herokuapp.com request_id=b4a91a25-07c9-4fdf-b02a-c0d253404d03 fwd="202.65.136.18" dyno= connect= service= status=503 bytes=
+2015-05-30T15:24:23.261546+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/:5000" host=nexthack.herokuapp.com request_id=1b542f85-3054-4e1e-8277-501f9bd55e7f fwd="202.153.43.137" dyno= connect= service= status=503 bytes=
+2015-05-30T15:24:25.248231+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=nexthack.herokuapp.com request_id=b5bd03a0-4f65-4f15-a254-1dfe456f8415 fwd="202.153.43.137" dyno= connect= service= status=503 bytes=
