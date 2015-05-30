@@ -44,3 +44,24 @@
 2015-05-30T15:24:10.451413+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=nexthack.herokuapp.com request_id=b4a91a25-07c9-4fdf-b02a-c0d253404d03 fwd="202.65.136.18" dyno= connect= service= status=503 bytes=
 2015-05-30T15:24:23.261546+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/:5000" host=nexthack.herokuapp.com request_id=1b542f85-3054-4e1e-8277-501f9bd55e7f fwd="202.153.43.137" dyno= connect= service= status=503 bytes=
 2015-05-30T15:24:25.248231+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=nexthack.herokuapp.com request_id=b5bd03a0-4f65-4f15-a254-1dfe456f8415 fwd="202.153.43.137" dyno= connect= service= status=503 bytes=
+2015-05-30T15:40:55.050758+00:00 heroku[api]: Deploy f28cfbe by rituraj.tc@gmail.com
+2015-05-30T15:40:55.050788+00:00 heroku[api]: Release v5 created by rituraj.tc@gmail.com
+2015-05-30T15:40:55.224940+00:00 heroku[web.1]: State changed from crashed to starting
+2015-05-30T15:40:59.370935+00:00 heroku[web.1]: Starting process with command `python nexthack.py`
+2015-05-30T15:41:00.654054+00:00 app[web.1]:                                  ^
+2015-05-30T15:41:00.654106+00:00 app[web.1]: SyntaxError: invalid syntax
+2015-05-30T15:41:00.654004+00:00 app[web.1]:     app.run(host='0.0.0.0', port=$PORT)
+2015-05-30T15:41:00.653985+00:00 app[web.1]:   File "nexthack.py", line 273
+2015-05-30T15:41:01.478572+00:00 heroku[web.1]: Process exited with status 1
+2015-05-30T15:41:01.497601+00:00 heroku[web.1]: State changed from starting to crashed
+2015-05-30T15:41:01.498703+00:00 heroku[web.1]: State changed from crashed to starting
+2015-05-30T15:41:06.929125+00:00 heroku[web.1]: Starting process with command `python nexthack.py`
+2015-05-30T15:41:08.759149+00:00 app[web.1]:   File "nexthack.py", line 273
+2015-05-30T15:41:08.759208+00:00 app[web.1]:     app.run(host='0.0.0.0', port=$PORT)
+2015-05-30T15:41:08.759330+00:00 app[web.1]:                                  ^
+2015-05-30T15:41:08.759350+00:00 app[web.1]: SyntaxError: invalid syntax
+2015-05-30T15:41:09.561678+00:00 heroku[web.1]: State changed from starting to crashed
+2015-05-30T15:41:09.551222+00:00 heroku[web.1]: Process exited with status 1
+2015-05-30T16:23:54.624624+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=nexthack.herokuapp.com request_id=f8ffc385-806b-475c-9ec6-d993f695d5e2 fwd="49.205.97.61" dyno= connect= service= status=503 bytes=
+2015-05-30T16:23:55.627370+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=nexthack.herokuapp.com request_id=9a01b8b9-af77-495b-b1a2-8c8a24be88a6 fwd="49.205.97.61" dyno= connect= service= status=503 bytes=
+2015-05-30T16:23:56.526851+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=nexthack.herokuapp.com request_id=3169d615-e260-4cff-a4f5-ecfce5548705 fwd="49.205.97.61" dyno= connect= service= status=503 bytes=
