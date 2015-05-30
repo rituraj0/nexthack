@@ -65,3 +65,22 @@
 2015-05-30T16:23:54.624624+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=nexthack.herokuapp.com request_id=f8ffc385-806b-475c-9ec6-d993f695d5e2 fwd="49.205.97.61" dyno= connect= service= status=503 bytes=
 2015-05-30T16:23:55.627370+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=nexthack.herokuapp.com request_id=9a01b8b9-af77-495b-b1a2-8c8a24be88a6 fwd="49.205.97.61" dyno= connect= service= status=503 bytes=
 2015-05-30T16:23:56.526851+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=nexthack.herokuapp.com request_id=3169d615-e260-4cff-a4f5-ecfce5548705 fwd="49.205.97.61" dyno= connect= service= status=503 bytes=
+2015-05-30T16:26:55.790867+00:00 heroku[web.1]: State changed from crashed to starting
+2015-05-30T16:26:55.694140+00:00 heroku[api]: Deploy 81fa18b by rituraj.tc@gmail.com
+2015-05-30T16:26:55.694140+00:00 heroku[api]: Release v6 created by rituraj.tc@gmail.com
+2015-05-30T16:26:59.779660+00:00 heroku[web.1]: Starting process with command `python nexthack.py`
+2015-05-30T16:27:02.443142+00:00 app[web.1]:  * Running on http://0.0.0.0:5000/
+2015-05-30T16:28:00.182173+00:00 heroku[web.1]: Error R10 (Boot timeout) -> Web process failed to bind to $PORT within 60 seconds of launch
+2015-05-30T16:28:00.182173+00:00 heroku[web.1]: Stopping process with SIGKILL
+2015-05-30T16:28:00.983735+00:00 heroku[web.1]: State changed from starting to crashed
+2015-05-30T16:28:00.984473+00:00 heroku[web.1]: State changed from crashed to starting
+2015-05-30T16:28:01.016478+00:00 heroku[web.1]: Process exited with status 137
+2015-05-30T16:28:04.850871+00:00 heroku[web.1]: Starting process with command `python nexthack.py`
+2015-05-30T16:28:07.384372+00:00 app[web.1]:  * Running on http://0.0.0.0:5000/
+2015-05-30T16:28:24.852386+00:00 heroku[router]: at=error code=H20 desc="App boot timeout" method=GET path="/" host=nexthack.herokuapp.com request_id=cfa82fe2-8526-40b8-a2ee-cd05cd104499 fwd="49.205.97.61" dyno= connect= service= status=503 bytes=
+2015-05-30T16:29:04.931924+00:00 heroku[web.1]: Error R10 (Boot timeout) -> Web process failed to bind to $PORT within 60 seconds of launch
+2015-05-30T16:29:04.932288+00:00 heroku[web.1]: Stopping process with SIGKILL
+2015-05-30T16:29:05.847251+00:00 heroku[web.1]: State changed from starting to crashed
+2015-05-30T16:29:05.804093+00:00 heroku[web.1]: Process exited with status 137
+2015-05-30T16:29:06.745267+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/" host=nexthack.herokuapp.com request_id=dc68f802-5cc9-466d-8654-345496f3dde0 fwd="49.205.97.61" dyno= connect= service= status=503 bytes=
+2015-05-30T16:29:08.291507+00:00 heroku[router]: at=error code=H10 desc="App crashed" method=GET path="/favicon.ico" host=nexthack.herokuapp.com request_id=52be0bdc-8c51-4887-91fb-b58964ac8cbd fwd="49.205.97.61" dyno= connect= service= status=503 bytes=
