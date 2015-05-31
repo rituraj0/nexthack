@@ -1,5 +1,9 @@
-from random import randint
+import hashlib;
 import pycps
+from pycps.query import *
+import xml.etree.ElementTree as ET
+import uuid
+from random import randint
 import os
 from time import sleep
 from flask import Flask, jsonify
@@ -22,6 +26,25 @@ app.cache = Cache(app)
 
 
 posts= {"ongoing":[] , "upcoming":[]}
+
+
+def convert2json(document):
+    root = ET.fromstring(document);
+    data = {}
+    for child in root:
+        if( child.tag == "id"):
+            continue;
+        data[child.tag]=child.text;
+    #json_data = json.dumps(data);
+    return data;
+
+def fetchFromDB(type):
+    con = pycps.Connection('tcp://cloud-eu-0.clusterpoint.com:9007', 'nexthack', 'rituraj.tc@gmail.com', 'clusterpoint', '794') 
+    response = con.search(term ( and_terms(type) , 'onup') );
+    answer = []
+    for id, document in response.get_documents(doc_format='string').items():
+        answer.append(convert2json(document));
+    return answer;
 
 def getStartTime(startTime):
 	allTime = (startTime.split("-")[0] ).split(".");
@@ -73,9 +96,9 @@ def getDataFromGithub():
         duration = getDuration(int(( mktime(end_time)-mktime(start_time) )/60 ))
 
         if cur_time>start_time and cur_time<end_time:
-        	posts["ongoing"].append({  "Name" : name  , "url" : url , "EndTime"   : strftime("%a, %d %b %Y %H:%M", end_time)  ,"Platform": location  })        	
+        	posts["ongoing"].append({ "onup":"on", "Name" : name  , "url" : url , "EndTime"   : strftime("%a, %d %b %Y %H:%M", end_time)  ,"Platform": location  })        	
         if cur_time<start_time:
-        	posts["upcoming"].append({ "Name" : name , "url" : url , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform": location })
+        	posts["upcoming"].append({ "onup":"up","Name" : name , "url" : url , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform": location })
 
 
 def getDataFromCodechef():
@@ -90,13 +113,13 @@ def getDataFromCodechef():
             start_time = strptime(details[2].string, "%Y-%m-%d %H:%M:%S")
             end_time = strptime(details[3].string, "%Y-%m-%d %H:%M:%S")
             duration = getDuration(int(( mktime(end_time)-mktime(start_time) )/60 ))
-            posts["upcoming"].append({"Name" :  details[1].string  , "url" : "http://www.codechef.com"+details[1].a["href"] , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration ,"Platform":"CODECHEF" })
+            posts["upcoming"].append({ "onup":"up","Name" :  details[1].string  , "url" : "http://www.codechef.com"+details[1].a["href"] , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration ,"Platform":"CODECHEF" })
 
         ongoing_contests = statusdiv[0].findAll("tr")
         for ongoing_contest in ongoing_contests[1:]:
             details = ongoing_contest.findAll("td")
             end_time = strptime(details[3].string, "%Y-%m-%d %H:%M:%S")
-            posts["ongoing"].append({ "Name" :  details[1].string  , "url" : "http://www.codechef.com"+details[1].a["href"] , "EndTime" : strftime("%a, %d %b %Y %H:%M", end_time) ,"Platform":"CODECHEF"})
+            posts["ongoing"].append({ "onup":"on","Name" :  details[1].string  , "url" : "http://www.codechef.com"+details[1].a["href"] , "EndTime" : strftime("%a, %d %b %Y %H:%M", end_time) ,"Platform":"CODECHEF"})
     else:
         upcoming_contests = statusdiv[0].findAll("tr")
         for upcoming_contest in upcoming_contests[1:]:
@@ -104,7 +127,7 @@ def getDataFromCodechef():
             start_time = strptime(details[2].string, "%Y-%m-%d %H:%M:%S")
             end_time = strptime(details[3].string, "%Y-%m-%d %H:%M:%S")
             duration = getDuration(int(( mktime(end_time)-mktime(start_time) )/60 ))
-            posts["upcoming"].append({"Name" :  details[1].string  , "url" : "http://www.codechef.com"+details[1].a["href"] , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration ,"Platform":"CODECHEF" })
+            posts["upcoming"].append({"onup":"up","Name" :  details[1].string  , "url" : "http://www.codechef.com"+details[1].a["href"] , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration ,"Platform":"CODECHEF" })
     
 
 def getDataFromHackerearth():
@@ -125,7 +148,7 @@ def getDataFromHackerearth():
         else: challenge_type = 'contest'
 
         if item["status"].strip()=="UPCOMING":
-            posts["upcoming"].append({ "Name" :  item["title"].strip()  , "url" : item["url"].strip() , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform":"HACKEREARTH","challenge_type": challenge_type  })
+            posts["upcoming"].append({ "onup":"up","Name" :  item["title"].strip()  , "url" : item["url"].strip() , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform":"HACKEREARTH","challenge_type": challenge_type  })
 
     page = urlopen("https://clients6.google.com/calendar/v3/calendars/hackerearth.com_73f0o8kl62rb5v1htv19p607e4@group.calendar.google.com/events?calendarId=hackerearth.com_73f0o8kl62rb5v1htv19p607e4%40group.calendar.google.com&singleEvents=true&timeZone=Asia%2FCalcutta&maxAttendees=1&maxResults=250&sanitizeHtml=true&timeMin="+ref_date+"T00%3A00%3A00%2B05%3A30&key=AIzaSyBNlYH01_9Hc5S1J9vuFmu2nUqBZJNAXxs")
     data = json.load(page)["items"]
@@ -139,9 +162,9 @@ def getDataFromHackerearth():
         else: challenge_type = 'contest'
         
         if cur_time>start_time and cur_time<end_time and item["summary"].strip() not in duplicate_check:
-            posts["ongoing"].append({  "Name" :  item["summary"].strip()  , "url" : item["location"].strip() , "EndTime"   : strftime("%a, %d %b %Y %H:%M", end_time)  ,"Platform":"HACKEREARTH" ,"challenge_type":challenge_type })
+            posts["ongoing"].append({ "onup":"on", "Name" :  item["summary"].strip()  , "url" : item["location"].strip() , "EndTime"   : strftime("%a, %d %b %Y %H:%M", end_time)  ,"Platform":"HACKEREARTH" ,"challenge_type":challenge_type })
         elif cur_time<start_time and item["summary"].strip() not in duplicate_check:
-            posts["upcoming"].append({ "Name" :  item["summary"].strip()  , "url" : item["location"].strip() , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform":"HACKEREARTH" ,"challenge_type":challenge_type })
+            posts["upcoming"].append({ "onup":"up","Name" :  item["summary"].strip()  , "url" : item["location"].strip() , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform":"HACKEREARTH" ,"challenge_type":challenge_type })
 
     
 
@@ -157,9 +180,9 @@ def getDataFromCodeforces():
         duration = getDuration( item["durationSeconds"]/60 )
         
         if item["phase"].strip()=="BEFORE":  
-            posts["upcoming"].append({ "Name" :  item["name"] , "url" : "http://codeforces.com/contest/"+str(item["id"]) , "StartTime" :  start_time,"EndTime" : end_time,"Duration":duration,"Platform":"CODEFORCES"  })
+            posts["upcoming"].append({ "onup":"up","Name" :  item["name"] , "url" : "http://codeforces.com/contest/"+str(item["id"]) , "StartTime" :  start_time,"EndTime" : end_time,"Duration":duration,"Platform":"CODEFORCES"  })
         else:
-            posts["ongoing"].append({  "Name" :  item["name"] , "url" : "http://codeforces.com/contest/"+str(item["id"])  , "EndTime"   : end_time  ,"Platform":"CODEFORCES"  })
+            posts["ongoing"].append({ "onup":"on", "Name" :  item["name"] , "url" : "http://codeforces.com/contest/"+str(item["id"])  , "EndTime"   : end_time  ,"Platform":"CODEFORCES"  })
 
 def getDataFromTopcoder():
     try:
@@ -180,9 +203,9 @@ def getDataFromTopcoder():
                 else :            url = "http://tco15.topcoder.com/algorithm/rules/"
                 
                 if cur_time<start_time:
-                    posts["upcoming"].append({ "Name" :  name , "url" : url ,"EndTime" : end_time_indian,"Duration":duration, "StartTime" :  start_time_indian,"Platform":"TOPCODER"  })
+                    posts["upcoming"].append({ "onup":"up", "Name" :  name , "url" : url ,"EndTime" : end_time_indian,"Duration":duration, "StartTime" :  start_time_indian,"Platform":"TOPCODER"  })
                 elif cur_time>start_time and cur_time<end_time:
-                    posts["ongoing"].append({ "Name" :  name , "url" : url ,"EndTime" : end_time_indian,"Platform":"TOPCODER"  })
+                    posts["ongoing"].append({ "onup":"on", "Name" :  name , "url" : url ,"EndTime" : end_time_indian,"Platform":"TOPCODER"  })
                     
     except Exception, e:
         pass
@@ -197,9 +220,9 @@ def getDataFromHackerrankGeneral():
             end_time = strptime(item["get_endtimeiso"], "%Y-%m-%dT%H:%M:%SZ")
             duration = getDuration(int(( mktime(end_time)-mktime(start_time) )/60 ))
             if not item["started"]:
-                posts["upcoming"].append({ "Name" :  item["name"] , "url" : "https://www.hackerrank.com/"+item["slug"] , "StartTime" :  strftime("%a, %d %b %Y %H:%M", localtime(mktime(start_time)+19800)),"EndTime" : strftime("%a, %d %b %Y %H:%M", localtime(mktime(end_time)+19800)),"Duration":duration,"Platform":"HACKERRANK"  })
+                posts["upcoming"].append({ "onup":"up","Name" :  item["name"] , "url" : "https://www.hackerrank.com/"+item["slug"] , "StartTime" :  strftime("%a, %d %b %Y %H:%M", localtime(mktime(start_time)+19800)),"EndTime" : strftime("%a, %d %b %Y %H:%M", localtime(mktime(end_time)+19800)),"Duration":duration,"Platform":"HACKERRANK"  })
             elif   item["started"]:
-                posts["ongoing"].append({  "Name" :  item["name"] , "url" : "https://www.hackerrank.com/"+item["slug"]  , "EndTime"   : strftime("%a, %d %b %Y %H:%M", localtime(mktime(end_time)+19800))  ,"Platform":"HACKERRANK"  })
+                posts["ongoing"].append({ "onup":"on", "Name" :  item["name"] , "url" : "https://www.hackerrank.com/"+item["slug"]  , "EndTime"   : strftime("%a, %d %b %Y %H:%M", localtime(mktime(end_time)+19800))  ,"Platform":"HACKERRANK"  })
 
 def getDataFromHackerrankCollege():
     cur_time = str(int(mktime(localtime())*1000))
@@ -211,9 +234,9 @@ def getDataFromHackerrankCollege():
             end_time = strptime(item["get_endtimeiso"], "%Y-%m-%dT%H:%M:%SZ")
             duration = getDuration(int(( mktime(end_time)-mktime(start_time) )/60 ))
             if not item["started"]:
-                posts["upcoming"].append({ "Name" :  item["name"] , "url" : "https://www.hackerrank.com/"+item["slug"] , "StartTime" :  strftime("%a, %d %b %Y %H:%M", localtime(mktime(start_time)+19800)),"EndTime" : strftime("%a, %d %b %Y %H:%M", localtime(mktime(end_time)+19800)),"Duration":duration,"Platform":"HACKERRANK"  })
+                posts["upcoming"].append({ "onup":"up", "Name" :  item["name"] , "url" : "https://www.hackerrank.com/"+item["slug"] , "StartTime" :  strftime("%a, %d %b %Y %H:%M", localtime(mktime(start_time)+19800)),"EndTime" : strftime("%a, %d %b %Y %H:%M", localtime(mktime(end_time)+19800)),"Duration":duration,"Platform":"HACKERRANK"  })
             elif   item["started"]:
-                posts["ongoing"].append({  "Name" :  item["name"] , "url" : "https://www.hackerrank.com/"+item["slug"]  , "EndTime"   : strftime("%a, %d %b %Y %H:%M", localtime(mktime(end_time)+19800))  ,"Platform":"HACKERRANK"  })
+                posts["ongoing"].append({ "onup":"on", "Name" :  item["name"] , "url" : "https://www.hackerrank.com/"+item["slug"]  , "EndTime"   : strftime("%a, %d %b %Y %H:%M", localtime(mktime(end_time)+19800))  ,"Platform":"HACKERRANK"  })
 
 def getDataFromGoogle():
 	cur_time = localtime()
@@ -226,13 +249,38 @@ def getDataFromGoogle():
 		    duration = getDuration(int(( mktime(end_time)-mktime(start_time) )/60 ))
 
 		    if cur_time>start_time and cur_time<end_time:
-		        posts["ongoing"].append({  "Name" :  "Google Code Jam "+item["summary"]  , "url" : "https://code.google.com/codejam" , "EndTime"   : strftime("%a, %d %b %Y %H:%M", end_time)  ,"Platform":"GOOGLE"  })
+		        posts["ongoing"].append({ "onup":"on", "Name" :  "Google Code Jam "+item["summary"]  , "url" : "https://code.google.com/codejam" , "EndTime"   : strftime("%a, %d %b %Y %H:%M", end_time)  ,"Platform":"GOOGLE"  })
 		    if cur_time<start_time:
-		        posts["upcoming"].append({ "Name" :  "Google Code Jam "+item["summary"]  , "url" : "https://code.google.com/codejam" , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform":"GOOGLE" })
+		        posts["upcoming"].append({ "onup":"up","Name" :  "Google Code Jam "+item["summary"]  , "url" : "https://code.google.com/codejam" , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform":"GOOGLE" })
 
-def fetch():
+@app.route('/')
+@app.cache.cached(timeout=3600) # cache for 1 hour
+def index():   
+    answer = { "upcoming" : [] , "ongoing": [] };
+    answer[ "upcoming" ]  = fetchFromDB("up");
+    answer[ "ongoing" ] = fetchFromDB("on");
+    answer["timestamp"] = strftime("%a, %d %b %Y %H:%M:%S", localtime())
+
+    print( len(answer[ "upcoming" ] ));
+
+    resp = jsonify(result=answer);
+
+    resp.status_code = 200
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp;
 
 
+def getHash(document):
+    name="";
+    if( document.has_key("Name")):
+        name=name+document["Name"];
+    if( document.has_key("url")):
+        name=name+document["url"];
+
+    hash_object = hashlib.sha512(name);
+    return hash_object.hexdigest();
+
+def populateDatabase():
     posts["upcoming"]=[]
     posts["ongoing"]=[]
 
@@ -245,7 +293,7 @@ def fetch():
     thread_list.append( threading.Thread(target=getDataFromHackerrankGeneral) )
     thread_list.append( threading.Thread(target=getDataFromHackerrankCollege) )
     thread_list.append( threading.Thread(target=getDataFromGoogle) )
-    
+
     for thread in thread_list:
         thread.start()
 
@@ -256,38 +304,35 @@ def fetch():
     posts["ongoing"] = sorted(posts["ongoing"], key=lambda k: strptime(k['EndTime'], "%a, %d %b %Y %H:%M"))
     posts["timestamp"] = strftime("%a, %d %b %Y %H:%M:%S", localtime())
 
-
-@app.route('/')
-@app.cache.cached(timeout=900) # cache for 15 minutes
-def index():    
-    fetch();
-    resp = jsonify(result=posts)
-    resp.status_code = 200
-    resp.headers['Access-Control-Allow-Origin'] = '*'
-    return resp
-
-
-@app.route('/index')
-def insert():
     con = pycps.Connection('tcp://cloud-eu-0.clusterpoint.com:9007', 'nexthack', 'rituraj.tc@gmail.com', 'clusterpoint', '794')
-    doc = {'title': 'goal', 'text': 'second text.' , 'Start': "1525-05-2015"}
-    con.insert({ randint(1,1000): doc})
-    return "inserted";
 
-def populate_database():
-    con = pycps.Connection('tcp://cloud-eu-0.clusterpoint.com:9007', 'nexthack', 'rituraj.tc@gmail.com', 'clusterpoint', '794')
+    x=0;
+    for xy in posts["upcoming"]:
+        try:
+            con.insert({ getHash(xy) : xy})
+        except pycps.APIError as e:
+            x+=1;
+
+    for xy in posts["ongoing"]:
+        try:
+            con.insert({ getHash(xy) : xy})
+        except pycps.APIError as e:
+            x+=1;
+    print("duplicates {0}".format(x));
+
+def populateDatabaseRegularly():
     while(True):
-        doc = {'title': 'goal', 'text': 'second text.' , 'Start': "1525-05-2015"}
-        con.insert({ randint(1,9999999): doc})
-        sleep(5);#slep for 5 sec
+        populateDatabase();
+        print("poplulates");
+        sleep(3600);#sleep for an hour
 
 def start_server():
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', 8035))
     app.run(host='0.0.0.0', port=port)
 
 if __name__ == '__main__':
     thread_list = []
-    thread_list.append( threading.Thread(target=populate_database) )
+    thread_list.append( threading.Thread(target=populateDatabaseRegularly) )
     thread_list.append( threading.Thread(target=start_server) )
 
     for thread in thread_list:
