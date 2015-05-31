@@ -79,6 +79,75 @@ def getDuration(duration):
     if minutes!=0:ans+=str(minutes)+"m"
     return ans.strip()
 
+def getHash(document):
+    name="";
+    if( document.has_key("Name")):
+        name=name+document["Name"];
+    if( document.has_key("url")):
+        name=name+document["url"];
+
+    hash_object = hashlib.sha512(name);
+    return hash_object.hexdigest();
+
+
+def get_valid_links(url):
+    """Return list of valid links on the given url."""
+    valid_links = []
+    try:
+        html = urlopen(url).read()
+        soup = BeautifulSoup(html)
+        for tag in soup.findAll('a', href=True):
+            parsed_href = urlparse(tag['href'])
+            if parsed_href.netloc:
+                href = ''.join(parsed_href[:-1])
+            else:
+                href = urljoin(url, ''.join(parsed_href[:-1]))
+            if href != url and self.is_url_valid(href):
+                valid_links.append(href)
+    finally:
+        return valid_links;
+
+def parsePage(url):
+    """ Return list of all Hackathon data"""
+    page = urlopen(url);
+    soup = BeautifulSoup(page,"html.parser");
+    tables = soup.findAll("table");
+    cur_time = localtime();
+    for table in tables:        
+        data = table.find('tbody');
+        rows = data.findAll('tr'); 
+        for row in rows:
+            try:
+                details = row.findAll("td");
+                url= (details[0].findAll('a' , href = True))[0]['href']
+                name= (details[0].findAll('a' , href = True))[0].string
+                location =  details[1].string;
+                timing = details[2].string;
+                start_time = getStartTime(timing);
+                end_time = getEndTime(timing);
+                duration = getDuration(int(( mktime(end_time)-mktime(start_time) )/60 ))
+                if cur_time>start_time and cur_time<end_time:
+                    posts["ongoing"].append({ "onup":"on", "Name" : name  , "url" : url , "EndTime"   : strftime("%a, %d %b %Y %H:%M", end_time)  ,"Platform": location  })         
+                if cur_time<start_time:
+                    posts["upcoming"].append({ "onup":"up","Name" : name , "url" : url , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform": location })
+            except:
+                print("Some exception");
+
+def crawl(url):
+    queue=[]
+    queue.append(url);
+    it = 0;
+    while(it < len(queue)):
+        curr = queue[it];
+        it+=1;
+
+        parsePage(curr);
+
+        #get all link from this
+        new_links=get_valid_links(curr);
+        for xy in new_links:
+            queue.append(xy);
+
 def getDataFromGithub():
     page = urlopen("https://github.com/japacible/Hackathon-Calendar");
     soup = BeautifulSoup(page,"html.parser");
@@ -271,16 +340,6 @@ def index():
     return resp;
 
 
-def getHash(document):
-    name="";
-    if( document.has_key("Name")):
-        name=name+document["Name"];
-    if( document.has_key("url")):
-        name=name+document["url"];
-
-    hash_object = hashlib.sha512(name);
-    return hash_object.hexdigest();
-
 def populateDatabase():
     posts["upcoming"]=[]
     posts["ongoing"]=[]
@@ -331,13 +390,19 @@ def start_server():
     port = int(os.environ.get('PORT',5002 ))
     app.run(host='0.0.0.0', port=port)
 
+def startCrawling():
+    with open('starturl.txt', 'r') as read_data:
+        for line in read_data:
+            print(line);
+            crawl(line);
+
 if __name__ == '__main__':
     thread_list = []
     thread_list.append( threading.Thread(target=populateDatabaseRegularly) )
+    thread_list.append( threading.Thread(target=startCrawling) )
     thread_list.append( threading.Thread(target=start_server) )
-
     for thread in thread_list:
         thread.start()
     for thread in thread_list:
         thread.join()
-
+    
