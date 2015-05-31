@@ -4,7 +4,7 @@
   "name": "Next Hackathon",
   "short_name": "NextHack",
   "description": "Displays live and upcoming Hackathons.",
-  "version": "0.0.0",
+  "version": "1.0",
 
   "permissions": [
     "http://nexthack.herokuapp.com/",
