@@ -324,7 +324,7 @@ def getDataFromGoogle():
 		        posts["upcoming"].append({ "onup":"up","Name" :  "Google Code Jam "+item["summary"]  , "url" : "https://code.google.com/codejam" , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform":"GOOGLE" })
 
 @app.route('/')
-@app.cache.cached(timeout=1) # cache for 1 hour
+@app.cache.cached(timeout=10000) # cache for 1 hour
 def index():   
     answer = { "upcoming" : [] , "ongoing": [] };
     answer[ "upcoming" ]  = fetchFromDB("up");
@@ -384,10 +384,10 @@ def populateDatabaseRegularly():
     while(True):
         populateDatabase();
         print("poplulates");
-        sleep(3);#sleep for an hour
+        sleep(3600);#sleep for an hour
 
 def start_server():
-    port = int(os.environ.get('PORT',5002 ))
+    port = int(os.environ.get('PORT',5432 ))
     app.run(host='0.0.0.0', port=port)
 
 def startCrawling():
@@ -398,9 +398,8 @@ def startCrawling():
 
 if __name__ == '__main__':
     thread_list = []
-    thread_list.append( threading.Thread(target=populateDatabaseRegularly) )
-    thread_list.append( threading.Thread(target=startCrawling) )
     thread_list.append( threading.Thread(target=start_server) )
+    thread_list.append( threading.Thread(target=populateDatabaseRegularly) )
     for thread in thread_list:
         thread.start()
     for thread in thread_list:
