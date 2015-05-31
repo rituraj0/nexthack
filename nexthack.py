@@ -40,7 +40,8 @@ def convert2json(document):
 
 def fetchFromDB(type):
     con = pycps.Connection('tcp://cloud-eu-0.clusterpoint.com:9007', 'nexthack', 'rituraj.tc@gmail.com', 'clusterpoint', '794') 
-    response = con.search(term ( and_terms(type) , 'onup') );
+    response = con.search(term ( and_terms(type) , 'onup') ,100000 );
+    print("Total hits: {0}, returned: {1}".format(response.hits, response.found))
     answer = []
     for id, document in response.get_documents(doc_format='string').items():
         answer.append(convert2json(document));
@@ -254,15 +255,15 @@ def getDataFromGoogle():
 		        posts["upcoming"].append({ "onup":"up","Name" :  "Google Code Jam "+item["summary"]  , "url" : "https://code.google.com/codejam" , "StartTime" : strftime("%a, %d %b %Y %H:%M", start_time),"EndTime" : strftime("%a, %d %b %Y %H:%M", end_time),"Duration":duration,"Platform":"GOOGLE" })
 
 @app.route('/')
-@app.cache.cached(timeout=3600) # cache for 1 hour
+@app.cache.cached(timeout=1) # cache for 1 hour
 def index():   
     answer = { "upcoming" : [] , "ongoing": [] };
     answer[ "upcoming" ]  = fetchFromDB("up");
     answer[ "ongoing" ] = fetchFromDB("on");
     answer["timestamp"] = strftime("%a, %d %b %Y %H:%M:%S", localtime())
 
-    print( len(answer[ "upcoming" ] ));
-
+    print( " lUpcoming len {0} ".format(len(answer[ "upcoming" ] )));
+    print( " ongoing len {0} ".format(len(answer[ "ongoing" ] )));
     resp = jsonify(result=answer);
 
     resp.status_code = 200
@@ -324,10 +325,10 @@ def populateDatabaseRegularly():
     while(True):
         populateDatabase();
         print("poplulates");
-        sleep(3600);#sleep for an hour
+        sleep(3);#sleep for an hour
 
 def start_server():
-    port = int(os.environ.get('PORT', 8035))
+    port = int(os.environ.get('PORT',5002 ))
     app.run(host='0.0.0.0', port=port)
 
 if __name__ == '__main__':
@@ -340,4 +341,3 @@ if __name__ == '__main__':
     for thread in thread_list:
         thread.join()
 
-    
