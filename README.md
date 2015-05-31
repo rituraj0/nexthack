@@ -26,3 +26,6 @@ HOW TO USE:
 	      https://github.com/rituraj0/nexthack/blob/master/chrome_extenstion.crx
 	 b) Import it into Your chrome browser
 
+Screen Shot:
+	 	https://github.com/rituraj0/nexthack/blob/master/Screenshot.png
+
